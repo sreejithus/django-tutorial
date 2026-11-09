@@ -33,17 +33,25 @@ class Movie_Serializer(serializers.ModelSerializer):
                     # fields=['title','director','year',...]
 
            def validate(self,data):
-                   if data['rating']>10 and data['rating']<0:
+                   if data['rating'] > 10 or data['rating'] < 0:
                            raise serializers.ValidationError({"message":"Invalid rating"})
                    return data
 
 #to create user account we use user.objects.create_user() not user.objects.create()
-#for password  hashing 
-           def create(self,validated_data):
-                       u =  User.objects.create_user(**validated_data) 
-                       return u
-from django.contrib.auth.models import User 
+#for password hashing
+
+from django.contrib.auth.models import User
 class UserSerializer(serializers.ModelSerializer):
+            password = serializers.CharField(write_only=True)
+
             class Meta:
                     model = User
-                    fields = ['username','password','email','first_name','last_name']
+                    fields = ['username', 'password', 'email', 'first_name', 'last_name']
+
+            def create(self, validated_data):
+                    return User.objects.create_user(**validated_data)
+
+
+
+
+            

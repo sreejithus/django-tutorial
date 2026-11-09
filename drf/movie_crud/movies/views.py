@@ -82,6 +82,9 @@ class Retriveupdatedelete(APIView):
                           d=get_object_or_404(Movie,id=i)
                           d.delete()
                           return Response({"message":"deleted sucessfully"},status =status.HTTP_204_NO_CONTENTt)
+
+
+
                      
                          
                              

@@ -104,4 +104,6 @@ class Employeepartalupdate(APIView):
                           return Response(serializer_instance.data)
                  else:
                     return Response(serializer_instance.errors)
-       
+
+
+from django.db.models import Sum

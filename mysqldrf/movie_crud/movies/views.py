@@ -122,7 +122,7 @@ from rest_framework import mixins,generics
 #              queryset = Movie.objects.all()
 #              serializer_class = Movie_Serializer
 
-
+from rest_framework.permissions import IsAuthenticated
 
 from rest_framework import viewsets
 from django.db.models import Q
@@ -130,6 +130,7 @@ from django.db.models import Q
 class Movieview(viewsets.ModelViewSet):
               queryset = Movie.objects.all()
               serializer_class = Movie_Serializer
+              permission_classes=[IsAuthenticated]
 
 
 # class Moviesearch(APIView):
@@ -148,6 +149,7 @@ class Moviesearch(generics.ListAPIView,generics.GenericAPIView):
                                 serializer_class = Movie_Serializer
                                 filter_backends = [SearchFilter]
                                 search_fields = ['title','director']
+                                permission_classes=[IsAuthenticated]
 
 
 from django.contrib.auth.models import User 
@@ -155,9 +157,43 @@ class Registeruser(APIView):
 
           def post(self,request):
                     form_data = request.data
-                    serializer_instance =  UserSerializer(data =form_data)
+                    serializer_instance = UserSerializer(data=form_data)
                     if serializer_instance.is_valid():
                              serializer_instance.save()
-                             return Response(serializer_instance.data,status= status.HTTP_201_CREATED)
+                             return Response(serializer_instance.data,status=status.HTTP_201_CREATED)
                     else:
-                            return Response(serializer_instance.data,status=status.HTTP_400_BAD_REQUEST)
+                            return Response(serializer_instance.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+# from rest_framework.authtoken.models import Token
+# from django.contrib.auth import authenticate
+# from django.http import JsonResponse
+# class Obtain_auth_token(APIView):
+
+
+#         def post(self,request):
+
+
+#                    data = request.data
+#                    u=data['username']
+#                    p=data['password']
+
+#                    user = authenticate(username=u,password=p)
+
+#                    if user:
+#                            token,created =  Token.objects.get_or_create(user=user)
+
+#                            return JsonResponse({'token':token.key})
+#                    else:
+#                            return JsonResponse({'message':'invalid user credentials'})
+
+
+class LogoutApiView(APIView):
+           permission_classes = [IsAuthenticated]
+
+           def get(self, request):
+                    print(self.request.user)
+                    self.request.user.auth_token.delete()
+                    return Response({"message": "Logout Successfully"}, status=status.HTTP_200_OK)

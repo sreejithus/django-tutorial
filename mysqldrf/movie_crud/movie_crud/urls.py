@@ -24,10 +24,13 @@ router  = DefaultRouter()
 
 router.register('movies',views.Movieview)
 
+
+from rest_framework.authtoken.views import obtain_auth_token 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
      path('',include(router.urls)),
      path('moviesearch',views.Moviesearch.as_view()),
-     path('register',views.Registeruser.as_view())
+     path('register',views.Registeruser.as_view()),
+     path('login', obtain_auth_token)
  ]
